@@ -11,7 +11,7 @@
 ;; A simple library for displaying a 2x3 grid of pictures: used
 ;; for fun in the tests below (look for "Tests Start Here").  No need to understand
 ;; the graphics code, though it is not sophisticated.
-
+(require "hw4.rkt")
 (require (lib "graphics.rkt" "graphics"))
 
 (open-graphics)

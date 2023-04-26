@@ -95,10 +95,62 @@
 ;; (2) it allows vector elements not to be pairs in which case it skips them
 ;; (3) it always takes exactly two arguments. Process the vector elements in order starting from 0.
 
-(define vector-assoc
-  
+(define (vector-assoc v vec)
+  (letrec [(search-vec (lambda (i)
+                         (cond
+                           [(>= i (vector-length vec)) #f]
+                           [(pair? (vector-ref vec i))
+                            (let ([item (vector-ref vec i)])
+                              (if (equal? (car item) v)
+                                  item
+                                  (search-vec (+ i 1))))]
+                           [else (search-vec (+ i 1))]
+                           )))]
+    (search-vec 0)))
 
-(define xs (list (cons 1 2) (cons 3 4) (cons 5 6)))
-(assoc 1 xs)  ; '(1 . 2)
-(assoc 3 xs)  ; '(3 . 4)
-(assoc 42 xs) ; #f
+
+;; List Integer -> Function
+;; produces function of one argument that acts like Racket's assoc,
+;; which has an n-element vector-cache.
+;; Assumes: n is positive
+
+; With print expression
+;(define (cached-assoc xs n)
+;  (let* ([cache (make-vector n #f)] ; cache  -> vector of n size, starts empty (all elements #f).
+;         [i 0]
+;         [f (lambda(x)
+;              (let ([ans (vector-assoc x cache)])   ; check if it's already in the memo
+;                (if ans
+;                    (begin (display "Cache hit: ") (display ans) (newline) ans)   ; if it's already in the memo, return the result
+;                    (let ([new-ans (assoc x xs)])  ; if it's not already in the memo, compute it
+;                      (begin
+;                        (display "Cache miss: ") (display new-ans) (newline)
+;                        (vector-set! cache i new-ans)
+;                        (if (= i (- n 1))          ;if we reached the last index
+;                            (set! i 0)
+;                            (set! i (+ i 1)))
+;                        new-ans)))))])
+;    f))
+;
+;(define c (cached-assoc '((1 . "one") (2 . "two") (3 . "three")) 3))
+;(c 3)
+;(c 3)
+
+(define (cached-assoc xs n)
+  (let* ([cache (make-vector n #f)] ; cache  -> vector of n size, starts empty (all elements #f).
+          [i 0]
+          [f (lambda(x)
+               (let ([ans (vector-assoc x cache)])     ; check if it's already in the memo
+                 (if ans
+                     ans                               ; if it's already in the memo, return the result
+                     (let ([new-ans (assoc x xs)])     ; if it's not already in the memo, compute it
+                       (begin
+                         (vector-set! cache i new-ans) ; put the new computed result in the cache
+                         (if (= i (- n 1))             ; if we reached the last index
+                             (set! i 0)
+                             (set! i (+ i 1)))
+                         new-ans)))))])                ; return the result
+    f))
+
+
+

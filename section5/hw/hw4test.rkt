@@ -18,7 +18,6 @@
 
 (define a 2)
 
-
 (define tests
   (test-suite
    "Sample tests for Assignment 4"
@@ -54,13 +53,14 @@
    (check-equal? (stream-for-n-steps (stream-add-zero nats) 2) (list (cons 0 1) (cons 0 2)) "stream-add-zero test 2")
 
    (check-equal? (stream-for-n-steps (cycle-lists (list 1 2 3) (list "a" "b")) 3)
-                 (list (cons 1 "a") (cons 2 "b") (cons 3 "a")) "cycle-lists test")
+                 (list (cons 1 "a") (cons 2 "b") (cons 3 "a")) "cycle-lists test 1")
    (check-equal? (stream-for-n-steps (cycle-lists (list 1 2 3) (list "a" "b")) 4)
-                 (list (cons 1 "a") (cons 2 "b") (cons 3 "a") (cons 1 "b")) "cycle-lists test")
+                 (list (cons 1 "a") (cons 2 "b") (cons 3 "a") (cons 1 "b")) "cycle-lists test 2")
    
-   ; (check-equal? (vector-assoc 4 (vector (cons 2 1) (cons 3 1) (cons 4 1) (cons 5 1))) (cons 4 1) "vector-assoc test")
+   (check-equal? (vector-assoc 4 (vector (cons 2 1) (cons 3 1) (cons 4 1) (cons 5 1))) (cons 4 1) "vector-assoc test 1")
+   (check-equal? (vector-assoc 4 (vector (cons 2 1) 4 (cons 4 1) (cons 5 1))) (cons 4 1) "vector-assoc test 2")
    
-   ; (check-equal? ((cached-assoc (list (cons 1 2) (cons 3 4)) 3) 3) (cons 3 4) "cached-assoc test")
+   (check-equal? ((cached-assoc (list (cons 1 2) (cons 3 4)) 3) 3) (cons 3 4) "cached-assoc test 1")
    
    ; (check-equal? (while-less 7 do (begin (set! a (+ a 1)) a)) #t "while-less test")
    
