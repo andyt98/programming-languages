@@ -1,2 +1,5 @@
+.vscode
+
+# DrRacket
 *.bak
 compiled
