@@ -10,7 +10,7 @@
 ;; define some streams
 
 ;(define ones-really-bad (cons 1 ones-really-bad))
-(define ones-bad (lambda () (cons 1 (ones-bad))))
+;(define ones-bad (lambda () (cons 1 (ones-bad)))) ; infinite loop
 
 (define ones (lambda () (cons 1 ones)))
 
@@ -32,12 +32,13 @@ powers-of-two ; returns a procedure -> #<procedure:powers-of-two>
 (car ((cdr(powers-of-two)))) ; -> 4
 (car ((cdr ((cdr(powers-of-two)))))) ; -> 8
 
+;; counts how many elements you need to process until tester returns true
 (define (number-until stream tester)
   (letrec ([f (lambda (stream ans)
                 (let ([pr (stream)]) ; call the stream and put the result in pr
                   (if (tester (car pr))
-                      ans            
-                      (f (cdr pr) (+ ans 1)))))])
+                      ans                         ; if tester returns true, return ans             
+                      (f (cdr pr) (+ ans 1)))))]) ; otherwise call f on the next stream and increment ans
     (f stream 1)))
 
 (define four (number-until powers-of-two (lambda (x) (= x 16))))

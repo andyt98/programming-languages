@@ -9,8 +9,8 @@
 (define f (lambda (x) (* 1 (+ x b)))) 
 (define c (+ b 4)) 
 (set! b 5)
-(define z (f 4))   
-(define w c)       
+(define z (f 4)) ; 9  
+(define w c)     ; 7 
 
 ; a safe version of f would make a local copy of b
 ; no need to call the local varaible b also, but no reason not to either

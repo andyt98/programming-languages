@@ -20,11 +20,12 @@
 
 ; usage examples
 (for 7 to 11 do (print "hi"))
+
 (define (f x) (begin (print "A") x))
 (define (g x) (begin (print "B") x))
 (define (h x) (begin (print "C") x))
-(for (f 7) to (g 11) do (h 9))
-(for (f 11) to (g 7) do (h 9))
+(for (f 7) to (g 11) do (h 9)) ; prints A and B one time and C five times
+(for (f 11) to (g 7) do (h 9)) ; prints A and B one time and C zero times
 
 
 ;; let2 allows up to two local bindings (with let* semantics) with fewer parentheses

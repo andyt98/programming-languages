@@ -16,19 +16,23 @@
 
 ; 4 forms of local bindings
 
-; let evaluates all expressions using outer environment, 
+; let evaluates all expressions using outer environment,
 ; *not* earlier bindings
 (define (double1 x)
   (let ([x (+ x 3)]
         [y (+ x 2)])
     (+ x y -5)))
 
+(println (double1 7))
+
 ; let* is like ML's let: environment includes previous bindings
 (define (double2 x)
   (let* ([x (+ x 3)]
          [y (+ x 2)])
     (+ x y -8)))
-  
+
+(println (double2 7))
+
 ; letrec uses an environment where all bindings in scope
 ; * like ML's use of and for mutual recursion
 ; * you get an error if you use a variable before it's defined
@@ -42,8 +46,10 @@
            [w (+ x 7)])
     (f -9)))
 
+(println (triple 7))
+
 (define (mod2 x)
-  (letrec 
+  (letrec
       ([even?(lambda (x) (if (zero? x) #t (odd? (- x 1))))]
        [odd? (lambda (x) (if (zero? x) #f (even? (- x 1))))])
     (if (even? x) 0 1)))

@@ -14,14 +14,17 @@
 
 (define ones (lambda () (cons 1 ones)))
 
-;; calling ones
-(car (ones))
-((cdr (ones)))
-(car ((cdr (ones))))
-
 (define nats
   (letrec ([f (lambda (x) (cons x (lambda () (f (+ x 1)))))])
     (lambda () (f 1))))
+
+;; calling nats
+(car (nats))                 ; the first element in the stream -> 1
+(cdr (nats))                 ; the next stream -> #<procedure:...efining_streams.rkt:18:34>
+((cdr (nats)))               ; calling the next stream -> '(2 . #<procedure:...efining_streams.rkt:18:34>)
+(car ((cdr (nats))))         ; the first element of the next stream -> 2
+((cdr ((cdr (nats)))))       ; calling the next stream -> '(3 . #<procedure:...efining_streams.rkt:18:34>)
+(car ((cdr ((cdr (nats)))))) ; -> 3
 
 (define powers-of-two
   (letrec ([f (lambda (x) (cons x (lambda () (f (* x 2)))))])
