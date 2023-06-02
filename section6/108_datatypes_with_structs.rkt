@@ -21,11 +21,16 @@
                          (const (* v1 v2)))]
         [#t (error "eval-exp expected an exp")]))
 
-(eval-exp (const 17))
-(eval-exp (multiply (negate (add (const 2) (const 2))) (const 7)))
+(println add)    ; #<procedure:add>
+(println add?)   ; <procedure:add?>
+(println add-e1) ; <procedure:add-e1>
+(println add-e2) ; <procedure:add-e2>xx
 
-(define add-expr (add (const 3) (const 4)))
-add-expr
-(pair? (cons 1 2))
-(number? 34)
-(add? add-expr)
+(define add-example (add (const 3) (const 4)))
+(println add-example)            ;(add (const 3) (const 4))
+(println (add? add-example))     ; #t
+(println (eval-exp add-example)) ; (const 7)
+
+(println (eval-exp (multiply (negate (add (const 2) (const 2))) (const 7))))
+(println (pair? (cons 1 2)))
+(println (number? 34))

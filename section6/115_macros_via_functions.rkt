@@ -61,8 +61,15 @@
 
 ; Here are two Racket functions that given language-being-implemented syntax,
 ; produce language-being-implemented syntax
+; these functions act like macros
 (define (andalso e1 e2)
   (if-then-else e1 e2 (bool #f)))
+
+(println "Test 1")
+(define test1 (andalso (bool #t) (eq-num (const 3) (const 4))))
+test1            ;(if-then-else (bool #t) (eq-num (const 3) (const 4)) (bool #f))
+(eval-exp test1) ; (bool #f)
+
 
 (define (double e)
   (multiply e (const 2)))
@@ -74,11 +81,16 @@
       (const 1)
       (multiply (car es) (list-product (cdr es)))))
 
-(define test (andalso (eq-num (double (const 4))
+(define test2 (andalso (eq-num (double (const 4))
                               (list-product (list (const 2) (const 2) (const 1) (const 2))))
                       (bool #t)))
 
 ; notice we have not changed our interpreter at all
-(define result (eval-exp test))
+(define result (eval-exp test2))
+
+(println "Test 2")
+test2
+result
+
 
 
