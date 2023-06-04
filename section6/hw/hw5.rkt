@@ -101,20 +101,17 @@
             [newenv (cons (cons (mlet-var e) v) env)]) ; creates newenv by extending env by adding a new binding (cons (mlet-var e) v)
        (eval-under-env (mlet-body e) newenv))]
     [(call? e)
-     (let ([cl (eval-under-env (call-funexp e) env)]
-           [arg (eval-under-env (call-actual e) env)])
+     (let ([cl (eval-under-env (call-funexp e) env)]   ; evaluate the function exp
+           [arg (eval-under-env (call-actual e) env)]) ; evaluate the argument exp
        (if (closure? cl)
-           (let ([myfun (closure-fun cl)])
-             (eval-under-env
-              (fun-body myfun)
-              (let ([newenv
-                     (cons (cons (fun-formal myfun) arg)
-                           (closure-env cl))])
-                (if (fun-nameopt myfun)
-                    (cons (cons (fun-nameopt myfun) cl) newenv)
-                    newenv))))
+           (let ([myfun (closure-fun cl)]) ; check if the function exp is a closure
+             (eval-under-env (fun-body myfun)
+                             (let ([newenv(cons (cons (fun-formal myfun) arg) ; extends the closure env by adding a binding (fun arg, call arg)
+                                                (closure-env cl))])          
+                               (if (fun-nameopt myfun)                        ; if the function is named, add the binding to the newenv
+                                   (cons (cons (fun-nameopt myfun) cl) newenv)
+                                   newenv))))
            (error "MUPL call's funexp is not a closure")))]
-     
     [#t (error (format "bad MUPL expression: ~v" e))]))
 
 ;; Do NOT change
@@ -125,19 +122,41 @@
         
 ;; Problem 3
 
-(define (ifaunit e1 e2 e3) "CHANGE")
+(define (ifaunit e1 e2 e3)
+  (ifgreater (isaunit e1) (int 0) e2 e3))
 
-(define (mlet* lstlst e2) "CHANGE")
+(define (mlet* lstlst e2)
+  (cond [(empty? lstlst) e2]
+        [else (mlet (car (car lstlst))
+                    (cdr (car lstlst))
+                    (mlet* (cdr lstlst) e2))]))
 
-(define (ifeq e1 e2 e3 e4) "CHANGE")
+(define (ifeq e1 e2 e3 e4)
+  (mlet "_x" e1
+        (mlet "_y" e2
+              (ifgreater (var "_y") (var "_x")
+                         e4
+                         (ifgreater (var "_x") (var "_y")
+                                    e4
+                                    e3)))))
 
 ;; Problem 4
 
-(define mupl-map "CHANGE")
+(define mupl-map
+  (fun "mupl-map" "mupl-fun"
+       (fun "aux" "mupl-list"
+            (ifaunit (var "mupl-list")
+                     (aunit)
+                     (apair (call (var "mupl-fun") (fst (var "mupl-list")))
+                            (call (var "aux") (snd (var "mupl-list"))))))))
 
-(define mupl-mapAddN 
+(define mupl-mapAddN
   (mlet "map" mupl-map
-        "CHANGE (notice map is now in MUPL scope)"))
+        (fun "mupl-mapAddN" "i"
+             (fun #f "mupl-list"
+                  (call (call (var "map")
+                              (fun #f "x" (add (var "x") (var "i"))))
+                        (var "mupl-list"))))))
 
 ;; Challenge Problem
 
