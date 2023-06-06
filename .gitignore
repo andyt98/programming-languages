@@ -3,3 +3,6 @@
 # DrRacket
 *.bak
 compiled
+
+# JetBrains IDEs
+.idea
