@@ -6,3 +6,4 @@ compiled
 
 # JetBrains IDEs
 .idea
+*.iml
