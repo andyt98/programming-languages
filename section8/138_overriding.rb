@@ -74,7 +74,7 @@ class PolarPoint < Point
     @r
   end
 
-  # inherited distFromOrigin2 already works!!
+  # inherited distFromOrigin2 already works!! (uses getters for x and y)
 end
 
 # the key example

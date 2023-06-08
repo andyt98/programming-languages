@@ -10,30 +10,39 @@
 ;;  * an immutable list of immutable "methods" (symbols and functions taking self)
 (struct obj (fields methods))
 
+;; Field-list element example:
+;; (mcons 'x 17)
+
+;; Method-list element example:
+;; (cons 'get-x (lambda (self args) ...))
+
 ; like assoc but for an immutable list of mutable pairs
 (define (assoc-m v xs)
   (cond [(null? xs) #f]
         [(equal? v (mcar (car xs))) (car xs)]
         [#t (assoc-m v (cdr xs))]))
 
+;(assoc-m 'b (list (mcons 'a 1) (mcons 'b 2) (mcons 'c 3))) ; Output: (mcons 'b 2)
+
 (define (get obj fld)
-  (let ([pr (assoc-m fld (obj-fields obj))])
+  (let ([pr (assoc-m fld (obj-fields obj))]) ; get the appropiate pair in our list of fields
     (if pr
-        (mcdr pr)
+        (mcdr pr) ; if I actually get a pair, return its cdr (its content)
         (error "field not found"))))
 
 (define (set obj fld v)
-  (let ([pr (assoc-m fld (obj-fields obj))])
+  (let ([pr (assoc-m fld (obj-fields obj))]) ; get the appropiate pair in our list of fields
     (if pr
-        (set-mcdr! pr v)
+        (set-mcdr! pr v) ; if I actually get a pair, update its cdr (its content)
         (error "field not found"))))
 
 (define (send obj msg . args) ; convenience: multi-argument functions (2+ arguments)
-  (let ([pr (assoc msg (obj-methods obj))])
+  (let ([pr (assoc msg (obj-methods obj))])  ; get the appropiate pair in our list of methods
     (if pr
-        ((cdr pr) obj args) ; do the call
+        ((cdr pr) obj args) ; do the call, with self being obj
         (error "method not found" msg))))
 
+;; Point
 (define (make-point _x _y)
   (obj
    (list (mcons 'x _x)
@@ -44,10 +53,22 @@
          (cons 'set-y (lambda (self args) (set self 'y (car args))))
          (cons 'distToOrigin
                (lambda (self args)
-                 (let ([a (send self 'get-x)]
+                 (let ([a (send self 'get-x)] 
                        [b (send self 'get-y)])
                    (sqrt (+ (* a a) (* b b)))))))))
+;; by sending self to get-x and get-y we get dynamic dispatch
 
+
+(println "Point")
+(define p1 (make-point -4 0))
+p1
+(send p1 'get-x) ; -4
+(send p1 'get-y) ; 0
+(send p1 'distToOrigin) ; 4
+(send p1 'set-y 3)
+(send p1 'distToOrigin) ; 5
+
+;; Color Point
 (define (make-color-point _x _y _c)
   (let ([pt (make-point _x _y)])
     (obj
@@ -58,6 +79,18 @@
               (cons 'set-color (lambda (self args) (set self 'color (car args)))))
              (obj-methods pt)))))
 
+(println "Color Point")
+(define p2 (make-color-point -4 0 "red"))
+p2
+(send p2 'get-x)
+(send p2 'get-y)
+(send p2 'distToOrigin)
+(send p2 'set-y 3)
+(send p2 'distToOrigin)
+(send p2 'get-color)
+
+
+;; Polar Point
 (define (make-polar-point _r _th)
   (let ([pt (make-point #f #f)])
     (obj
@@ -93,22 +126,11 @@
                         (send self 'set-r-theta r theta)))))
       (obj-methods pt)))))
 
-(define p1 (make-point -4 0))
-p1
-(send p1 'get-x)
-(send p1 'get-y)
-(send p1 'distToOrigin)
-(send p1 'set-y 3)
-(send p1 'distToOrigin)
 
-(define p2 (make-color-point -4 0 "red"))
-p2
-(send p2 'get-x)
-(send p2 'get-y)
-(send p2 'distToOrigin)
-(send p2 'set-y 3)
-(send p2 'distToOrigin)
 
+
+
+(println "Polar Point")
 (define p3 (make-polar-point 4 3.1415926535))
 p3
 (send p3 'get-x)
@@ -116,3 +138,6 @@ p3
 (send p3 'distToOrigin)
 (send p3 'set-y 3)
 (send p3 'distToOrigin)
+
+;(obj-fields p3)
+;(obj-methods p3)

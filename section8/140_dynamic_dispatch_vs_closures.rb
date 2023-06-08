@@ -27,7 +27,8 @@ a1 = A.new.odd 7
 puts "a1 is " + a1.to_s + "\n\n"
 
 class B < A
-  def even(x) # changes B's odd too! (helps)
+  def even(x)
+    # changes B's odd too! (helps)
     puts "in even B"
     x % 2 == 0
   end
